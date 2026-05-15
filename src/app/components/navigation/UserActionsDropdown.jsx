@@ -86,7 +86,7 @@ const UserActionsDropdown = () => {
 
       {isOpen ? (
         <div
-          className="glass-panel absolute right-0 top-[calc(100%+0.65rem)] z-[170] w-56 rounded-xl p-2"
+          className="glass-panel absolute right-0 top-[calc(100%+0.65rem)] z-[170] w-56 rounded-xl bg-[var(--surface-panel-strong)]/85 p-2 backdrop-blur-2xl backdrop-saturate-150"
           role="menu"
         >
           <Link

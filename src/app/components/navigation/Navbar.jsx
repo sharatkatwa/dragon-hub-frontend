@@ -52,10 +52,8 @@ const Navbar = () => {
     <>
       <header
         className={[
-          "glass-panel interactive-surface sticky top-3 z-[150] mb-8 rounded-xl px-4 py-3 transition-transform duration-200 ease-out sm:top-4 sm:px-5 sm:py-4",
-          isNavbarVisible
-            ? "translate-y-0"
-            : "-translate-y-[calc(100%+1.5rem)]",
+          "glass-panel navbar-shell rounded-xl px-4 py-3 sm:px-5 sm:py-4",
+          isNavbarVisible ? "" : "navbar-shell--hidden",
         ].join(" ")}
       >
         <div className="flex items-center justify-between gap-4">
