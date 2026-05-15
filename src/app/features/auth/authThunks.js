@@ -51,3 +51,27 @@ export const logoutUser = createAsyncThunk(
     }
   }
 );
+
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch("/auth/profile", profileData);
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  }
+);
+
+export const updateProfileImages = createAsyncThunk(
+  "auth/updateProfileImages",
+  async (imageData, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch("/auth/profile/images", imageData);
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  }
+);

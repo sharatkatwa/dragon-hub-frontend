@@ -1,10 +1,14 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthCard from "../../components/forms/AuthCard";
 import AuthSubmitButton from "../../components/forms/AuthSubmitButton";
 import FormInput from "../../components/forms/FormInput";
+import { toast } from "../../components/toast/toast";
+import { useAuth } from "../../features/auth/useAuth";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { signup } = useAuth();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -21,7 +25,27 @@ const RegisterPage = () => {
   });
 
   const password = watch("password");
-  const handleRegisterPreview = () => {};
+  const handleRegister = async (values) => {
+    const payload = {
+      email: values.email.trim(),
+      fullName: values.fullName.trim(),
+      password: values.password,
+      username: values.username.trim(),
+    };
+
+    try {
+      await signup(payload);
+
+      toast.success("Your account is ready.", {
+        title: "Welcome to DragonHub",
+      });
+      navigate("/");
+    } catch (error) {
+      toast.error(error || "Unable to create your account. Please try again.", {
+        title: "Registration failed",
+      });
+    }
+  };
 
   return (
     <AuthCard
@@ -29,7 +53,7 @@ const RegisterPage = () => {
       subtitle="Create your profile, then start showcasing projects and technical writing."
       title="Create account"
     >
-      <form className="space-y-5" onSubmit={handleSubmit(handleRegisterPreview)}>
+      <form className="space-y-5" onSubmit={handleSubmit(handleRegister)}>
         <FormInput
           autoComplete="name"
           error={errors.fullName}

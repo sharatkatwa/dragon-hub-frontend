@@ -1,10 +1,14 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthCard from "../../components/forms/AuthCard";
 import AuthSubmitButton from "../../components/forms/AuthSubmitButton";
 import FormInput from "../../components/forms/FormInput";
+import { toast } from "../../components/toast/toast";
+import { useAuth } from "../../features/auth/useAuth";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -17,7 +21,24 @@ const LoginPage = () => {
     mode: "onBlur",
   });
 
-  const handleLoginPreview = () => {};
+  const handleLogin = async ({ identifier, password }) => {
+    const trimmedIdentifier = identifier.trim();
+    const credentials = trimmedIdentifier.includes("@")
+      ? { email: trimmedIdentifier, password }
+      : { username: trimmedIdentifier, password };
+
+    try {
+      await login(credentials);
+      toast.success("You are signed in.", {
+        title: "Welcome back",
+      });
+      navigate("/");
+    } catch (error) {
+      toast.error(error || "Unable to sign in. Please try again.", {
+        title: "Sign in failed",
+      });
+    }
+  };
 
   return (
     <AuthCard
@@ -25,7 +46,7 @@ const LoginPage = () => {
       subtitle="Enter your username or email to continue to your DragonHub workspace."
       title="Sign in"
     >
-      <form className="space-y-5" onSubmit={handleSubmit(handleLoginPreview)}>
+      <form className="space-y-5" onSubmit={handleSubmit(handleLogin)}>
         <FormInput
           autoComplete="username"
           error={errors.identifier}
@@ -65,7 +86,16 @@ const LoginPage = () => {
             />
             Remember me
           </label>
-          <a className="font-semibold text-brand-600 hover:text-brand-700" href="#">
+          <a
+            className="font-semibold text-brand-600 hover:text-brand-700"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              toast.info("Password reset is not available yet.", {
+                title: "Coming soon",
+              });
+            }}
+          >
             Forgot password?
           </a>
         </div>
