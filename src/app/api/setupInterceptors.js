@@ -1,8 +1,32 @@
 import api from "./axios";
 import { toast } from "../components/toast/toast";
 
+let interceptorId = null;
+let isRedirectingToLogin = false;
+
+const redirectToLogin = () => {
+  const currentPath = window.location.pathname;
+  const isAuthPage = currentPath === "/login" || currentPath === "/register";
+
+  if (isRedirectingToLogin || isAuthPage) {
+    return;
+  }
+
+  isRedirectingToLogin = true;
+
+  toast.warning("Your session expired. Please sign in again.", {
+    title: "Session expired",
+  });
+
+  window.location.replace("/login");
+};
+
 export const setupInterceptors = () => {
-  api.interceptors.response.use(
+  if (interceptorId !== null) {
+    return;
+  }
+
+  interceptorId = api.interceptors.response.use(
     (res) => res,
     async (error) => {
       const originalRequest = error.config;
@@ -21,10 +45,7 @@ export const setupInterceptors = () => {
         try {
           await api.post("/auth/refresh-token");
         } catch (refreshError) {
-          toast.warning("Your session expired. Please sign in again.", {
-            title: "Session expired",
-          });
-
+          redirectToLogin();
           return Promise.reject(refreshError);
         }
 
